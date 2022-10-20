@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using UnityEngine;
 
 public class CircularParent : MonoBehaviour
@@ -15,36 +13,35 @@ public class CircularParent : MonoBehaviour
         SetPositions();
     }
 
-    private List<RectTransform> GetAllChildren()
+    private float DegToRad(float deg)
     {
-        return GetComponentsInChildren<RectTransform>().ToList();
+        return (float) Math.PI * deg / 180;
     }
 
+    private Vector2 RadToPos(float rad)
+    {
+        return new Vector2(
+            (float) Math.Cos(rad),
+            (float) Math.Sin(rad)
+        );
+    }
 
     private void SetPositions()
     {
-        var children = GetAllChildren();
+        var children = GetComponentsInChildren<RectTransform>().ToList();
         int childCount = children.Count;
 
-        if (childCount <= 1)
-        {
-            return;
-        }
-
-        float DegToRad(float deg) => ((float) Math.PI * deg / 180);
+        if (childCount <= 1) return;
 
         float angleUnit = DegToRad(expandAngle) / (childCount - 1);
         float offset = DegToRad(startAngle);
 
         var angles = Enumerable.Range(0, childCount).Select(i => (angleUnit * i) + offset);
+        var positions = angles.Select(angle => RadToPos(angle) * radius);
 
-        var positions = angles.Select(angle => new Vector2(
-            (float) Math.Cos(angle),
-            (float) Math.Sin(angle)
-        ) * radius);
+        var objPosPairs = children.Zip(positions, (child, pos) => new {child, pos});
 
-        var pairs = children.Zip(positions, (child, pos) => new {child, pos});
-        foreach (var pair in pairs)
+        foreach (var pair in objPosPairs)
         {
             pair.child.localPosition = pair.pos;
         }
