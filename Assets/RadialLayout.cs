@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -58,10 +59,24 @@ public class RadialLayout : LayoutGroup
                     DrivenTransformProperties.Pivot);
                 Vector3 vPos = new Vector3(Mathf.Cos(fAngle * Mathf.Deg2Rad), Mathf.Sin(fAngle * Mathf.Deg2Rad), 0);
 
-                child.localPosition = vPos * fDistance;
+                var newPos = vPos * fDistance;
+                SetLocalPos(child, newPos);
+
                 child.anchorMin = child.anchorMax = child.pivot = new Vector2(0.5f, 0.5f);
                 fAngle += fOffsetAngle;
             }
+        }
+    }
+
+    void SetLocalPos(RectTransform rt, Vector3 pos)
+    {
+        if (Application.isPlaying)
+        {
+            rt.transform.DOLocalMove(pos, 1f);
+        }
+        else
+        {
+            rt.localPosition = pos;
         }
     }
 }
