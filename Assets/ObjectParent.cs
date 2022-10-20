@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ObjectParent : MonoBehaviour
 {
-    [SerializeField] [Range(0, 1)] private float progress;
+    [SerializeField] [Range(-1, 1)] private float progress;
     [SerializeField] private RectTransform verObj;
     [SerializeField] private RectTransform horObj;
 
@@ -16,7 +16,7 @@ public class ObjectParent : MonoBehaviour
 
     private void SetPositions()
     {
-        verObj.localPosition = new Vector3(100, 100 * progress, 0);
-        horObj.localPosition = new Vector3(100 * progress, 100, 0);
+        verObj.localPosition = new Vector3(0, 100 * progress, 0);
+        horObj.localPosition = new Vector3(100 * progress, 0, 0);
     }
 }
