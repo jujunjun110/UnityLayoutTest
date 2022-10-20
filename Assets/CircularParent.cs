@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CircularParent : MonoBehaviour
 {
+    [SerializeField] private bool isReversed;
     [SerializeField] [Range(0, 1000)] private float radius;
     [SerializeField] [Range(0, 360)] private float startAngle;
     [SerializeField] [Range(1, 360)] private float expandAngle;
@@ -33,7 +34,8 @@ public class CircularParent : MonoBehaviour
 
         if (childCount <= 1) return;
 
-        float angleUnit = DegToRad(expandAngle) / (childCount - 1);
+        float dir = isReversed ? -1 : 1;
+        float angleUnit = DegToRad(expandAngle) / (childCount - 1) * dir;
         float offset = DegToRad(startAngle);
 
         var angles = Enumerable.Range(0, childCount).Select(i => (angleUnit * i) + offset);
