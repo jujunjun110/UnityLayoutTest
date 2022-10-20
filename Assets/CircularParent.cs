@@ -44,13 +44,7 @@ public class CircularParent : MonoBehaviour
         float offset = DegToRad(startAngle);
 
         var angles = Enumerable.Range(0, childCount).Select(i => (angleUnit * i) + offset);
-        foreach (var angle in angles)
-        {
-            Debug.Log(angle * 180 / Math.PI);
-        }
-
         var positions = angles.Select(angle => RadToVec2(angle) * radius);
-
         var objPosPairs = children.Zip(positions, (child, pos) => new {child, pos});
 
         foreach (var pair in objPosPairs)
