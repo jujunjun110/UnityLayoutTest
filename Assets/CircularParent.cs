@@ -9,6 +9,11 @@ public class CircularParent : MonoBehaviour
     [SerializeField] [Range(0, 360)] private float startAngle;
     [SerializeField] [Range(1, 360)] private float expandAngle;
 
+    private void OnEnable()
+    {
+        SetPositions();
+    }
+
     private void OnValidate()
     {
         SetPositions();
@@ -19,7 +24,7 @@ public class CircularParent : MonoBehaviour
         return (float) Math.PI * deg / 180;
     }
 
-    private Vector2 RadToPos(float rad)
+    private Vector2 RadToVec2(float rad)
     {
         return new Vector2(
             (float) Math.Cos(rad),
@@ -29,7 +34,7 @@ public class CircularParent : MonoBehaviour
 
     private void SetPositions()
     {
-        var children = GetComponentsInChildren<RectTransform>().ToList();
+        var children = GetComponentsInChildren<RectTransform>().Where(c => c.gameObject != gameObject).ToList();
         int childCount = children.Count;
 
         if (childCount <= 1) return;
@@ -39,7 +44,12 @@ public class CircularParent : MonoBehaviour
         float offset = DegToRad(startAngle);
 
         var angles = Enumerable.Range(0, childCount).Select(i => (angleUnit * i) + offset);
-        var positions = angles.Select(angle => RadToPos(angle) * radius);
+        foreach (var angle in angles)
+        {
+            Debug.Log(angle * 180 / Math.PI);
+        }
+
+        var positions = angles.Select(angle => RadToVec2(angle) * radius);
 
         var objPosPairs = children.Zip(positions, (child, pos) => new {child, pos});
 
