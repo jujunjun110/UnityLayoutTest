@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -32,24 +33,29 @@ public class CircularParent : MonoBehaviour
         );
     }
 
+    private List<RectTransform> GetChildRectTransforms()
+    {
+        return GetComponentsInChildren<RectTransform>().Where(c => c.gameObject != gameObject).ToList();
+    }
+
     private void SetPositions()
     {
-        var children = GetComponentsInChildren<RectTransform>().Where(c => c.gameObject != gameObject).ToList();
-        int childCount = children.Count;
+        var targets = GetChildRectTransforms();
+        int targetCount = targets.Count;
 
-        if (childCount <= 1) return;
+        if (targetCount <= 1) return;
 
         float dir = isReversed ? -1 : 1;
-        float angleUnit = DegToRad(expandAngle) / (childCount - 1) * dir;
+        float angleUnit = DegToRad(expandAngle) / (targetCount - 1) * dir;
         float offset = DegToRad(startAngle);
 
-        var angles = Enumerable.Range(0, childCount).Select(i => (angleUnit * i) + offset);
+        var angles = Enumerable.Range(0, targetCount).Select(i => (angleUnit * i) + offset);
         var positions = angles.Select(angle => RadToVec2(angle) * radius);
-        var objPosPairs = children.Zip(positions, (child, pos) => new {child, pos});
+        var objPosPairs = targets.Zip(positions, (obj, pos) => new {obj, pos});
 
         foreach (var pair in objPosPairs)
         {
-            pair.child.localPosition = pair.pos;
+            pair.obj.localPosition = pair.pos;
         }
     }
 }
